@@ -20,7 +20,6 @@ async fn schedule_task_every_second_async() {
         let count = cloned_count.clone();
         println!("Now: {}", now);
         Box::pin(async move {
-            let count = count;
             let mut count = count.lock().unwrap();
             *count += 1;
         })
@@ -34,7 +33,7 @@ async fn schedule_task_every_second_async() {
 
     scheduler.stop();
 
-    let actual = count.lock().unwrap().clone();
+    let actual = *count.lock().unwrap();
     let expected = 3;
 
     assert_eq!(actual, expected);
@@ -48,9 +47,8 @@ async fn schedule_task_every_second_sync() {
     let count = Arc::new(Mutex::new(0));
     let cloned_count = count.clone();
     let cron = cron.clone();
-    let job = Job::new_sync(Box::new(move |now| {
+    let job = Job::new_sync(Box::new(move |_now| {
         let count = cloned_count.clone();
-        let count = count;
         let mut count = count.lock().unwrap();
         *count += 1;
     }));
@@ -63,7 +61,7 @@ async fn schedule_task_every_second_sync() {
 
     scheduler.stop();
 
-    let actual = count.lock().unwrap().clone();
+    let actual = *count.lock().unwrap();
     let expected = 3;
 
     assert_eq!(actual, expected);
