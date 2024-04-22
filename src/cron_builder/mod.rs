@@ -102,7 +102,7 @@ impl CronBuilder {
     }
 
     fn get_cron(pattern: &str) -> Result<Cron, CronError> {
-        Cron::new(pattern).with_seconds_optional().parse()
+        Cron::new(pattern).with_seconds_required().with_dom_and_dow().parse()
     }
 }
 

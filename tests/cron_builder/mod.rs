@@ -31,6 +31,18 @@ fn every_4_minutes() {
 }
 
 #[test]
+fn every_3_days() {
+    let mut cron_builder = get_cron_builder();
+    cron_builder.day_of_week(every("2"));
+    let cron = cron_builder.build().unwrap();
+
+    let actual = cron.pattern.to_string();
+    let expected = "* * * * * */2";
+
+    assert_eq!(actual, expected);
+}
+
+#[test]
 fn every_last_friday_of_the_month() {
     let mut cron_builder = get_cron_builder();
     cron_builder.day_of_week(last("5"));
