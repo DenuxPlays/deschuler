@@ -19,6 +19,7 @@ It uses [croner](https://github.com/Hexagon/croner-rust) for the most available 
 - [ ] shared data
 - [ ] support for crono and time
 - [ ] more scheduler (pure std, async-stc, etc.)
+- [ ] monitoring
 
 ## My goals
 
