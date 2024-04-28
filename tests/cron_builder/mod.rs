@@ -1,6 +1,3 @@
-use chrono_tz::Tz::UTC;
-
-use deschuler::cron_builder::config::BuilderConfigBuilder;
 use deschuler::cron_builder::utils::{every, last};
 use deschuler::cron_builder::CronBuilder;
 
@@ -55,7 +52,5 @@ fn every_last_friday_of_the_month() {
 }
 
 fn get_cron_builder() -> CronBuilder {
-    let config = BuilderConfigBuilder::default().timezone(UTC).use_utc(true).build().unwrap();
-
-    CronBuilder::new_with_config(config)
+    CronBuilder::default()
 }

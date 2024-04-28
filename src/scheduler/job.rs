@@ -2,11 +2,11 @@ use std::future::Future;
 use std::pin::Pin;
 use std::sync::Arc;
 
-use chrono::DateTime;
-use chrono_tz::Tz;
+use chrono::{DateTime, FixedOffset};
 
-pub type AsyncJob = Box<dyn Fn(DateTime<Tz>) -> Pin<Box<dyn Future<Output = ()> + Send + 'static>> + Send + Sync>;
-pub type SyncJob = Box<dyn Fn(DateTime<Tz>) + Send + Sync>;
+pub type AsyncJob =
+    Box<dyn Fn(DateTime<FixedOffset>) -> Pin<Box<dyn Future<Output = ()> + Send + 'static>> + Send + Sync>;
+pub type SyncJob = Box<dyn Fn(DateTime<FixedOffset>) + Send + Sync>;
 
 pub struct Job {
     pub job: AsyncJob,

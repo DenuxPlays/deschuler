@@ -17,7 +17,8 @@ It uses [croner](https://github.com/Hexagon/croner-rust) for the most available 
 - [ ] Persistent scheduling
 - [ ] Event/Notification system
 - [ ] shared data
-- [ ] support for crono and time
+- [ ] support for chrono and time
+- [ ] support for log crate
 - [ ] more scheduler (pure std, async-stc, etc.)
 - [ ] monitoring
 

@@ -1,4 +1,4 @@
-use chrono::{DateTime, TimeZone};
+use chrono::{DateTime, FixedOffset, Offset, TimeZone, Utc};
 use chrono_tz::Tz;
 use derive_builder::Builder;
 
@@ -6,24 +6,24 @@ use crate::util::date_time::get_now_naive;
 
 #[derive(Debug, Clone, PartialEq, Eq, Builder)]
 pub struct BuilderConfig {
-    pub timezone: Tz,
+    pub timezone: FixedOffset,
     pub use_utc: bool,
 }
 
 impl BuilderConfig {
-    pub fn get_now(&self) -> DateTime<Tz> {
+    pub fn get_now(&self) -> DateTime<FixedOffset> {
         let now = get_now_naive(self.use_utc);
 
-        let offset = self.timezone.offset_from_utc_datetime(&now);
-        DateTime::from_naive_utc_and_offset(now, offset)
+        DateTime::from_naive_utc_and_offset(now, self.timezone)
     }
 }
 
 impl Default for BuilderConfig {
     fn default() -> Self {
-        let use_utc = false;
+        let offset = Tz::UTC.offset_from_utc_datetime(&Utc::now().naive_utc()).fix();
+        let use_utc = true;
         Self {
-            timezone: Tz::UTC,
+            timezone: offset,
             use_utc,
         }
     }

@@ -33,6 +33,7 @@ use_self = "warn"
 
 [dev-dependencies]
 tokio = { version = "1.37.0", features = ["macros", "time", "rt", "sync"] }
+time =  { version = "0.3.36", features = ["local-offset"] }
 
 [dependencies]
 # Scheduling and event handling
