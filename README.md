@@ -24,7 +24,9 @@ It uses [croner](https://github.com/Hexagon/croner-rust) for the most available 
 
 ## My goals
 
-The goal is to create a feature-rich scheduling library that is easy to use.
-<br>
+The goal is to create a feature-rich scheduling library that is easy to use.  
 It should be very flexible. The "first" implementation uses tokio, but I want to make it possible that we supply more
 backends in the future.
+
+Each implementation can support different features. So that when a new feature is added not all backends have to be
+updated.
