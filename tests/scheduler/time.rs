@@ -12,7 +12,7 @@ pub fn test_time_to_chrono() {
 
     let config = BuilderConfigBuilder::default().timezone(timezone).use_utc(is_utc).build().unwrap();
 
-    assert_eq!(config.use_utc, false);
+    assert!(!config.use_utc);
     assert_eq!(config.timezone.local_minus_utc(), 14400);
 }
 
