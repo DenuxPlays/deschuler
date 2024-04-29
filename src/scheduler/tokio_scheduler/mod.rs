@@ -24,9 +24,8 @@ pub struct TokioScheduler {
     worker_sender: watch::Sender<bool>,
 }
 
-impl Default for TokioScheduler {
-    fn default() -> Self {
-        let config = TokioSchedulerConfig::default();
+impl TokioScheduler {
+    pub fn new(config: TokioSchedulerConfig) -> Self {
         let (sender, receiver) = channel(config.channel_size);
         let (worker_sender, worker_receiver) = watch::channel(false);
 
@@ -39,6 +38,12 @@ impl Default for TokioScheduler {
         Self::start_worker(worker_receiver, receiver);
 
         scheduler
+    }
+}
+
+impl Default for TokioScheduler {
+    fn default() -> Self {
+        Self::new(TokioSchedulerConfig::default())
     }
 }
 
