@@ -52,13 +52,16 @@ impl Scheduler for TokioScheduler {
         self.worker_sender.send(true).unwrap();
     }
 
-    fn schedule_job(&mut self, cron: Cron, task: Job) {
+    fn schedule_job(&mut self, cron: Cron, task: Arc<Job>) {
         let config = self.config.clone();
         let sender = self.sender.clone();
         let builder_config = config.builder_config.clone();
         tokio::spawn(async move {
-            let task = Arc::new(task.job);
             loop {
+                if task.is_interrupted() {
+                    break;
+                }
+
                 let now = builder_config.get_now().round_subsecs(0);
                 match cron.find_next_occurrence(&now, false) {
                     Ok(next) => {
@@ -67,10 +70,15 @@ impl Scheduler for TokioScheduler {
                         let duration = next.signed_duration_since(now).num_seconds();
                         let duration = Duration::from_secs(duration as u64);
                         sleep(duration).await;
-                        let task = task.clone();
+                        let job = task.get_job();
+
+                        if task.is_interrupted() {
+                            break;
+                        }
+
                         let job_handle = Box::new(move || {
                             tokio::spawn(async move {
-                                task(now).await;
+                                job(now).await;
                             })
                         });
 
@@ -97,14 +105,14 @@ impl TokioScheduler {
         tokio::spawn(async move {
             loop {
                 match worker_receiver.has_changed() {
-                    Ok(bool) => {
-                        if bool {
-                            match receiver.recv().await {
-                                Some(job) => Self::handle_task(job),
-                                None => break,
+                    Ok(bool) => match receiver.recv().await {
+                        Some(job) => {
+                            if bool {
+                                Self::handle_task(job)
                             }
                         }
-                    }
+                        None => break,
+                    },
                     Err(err) => {
                         error!("The worker has experienced an unexpected error: {:?}", err);
                         break;

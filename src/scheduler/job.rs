@@ -1,21 +1,26 @@
 use std::future::Future;
 use std::pin::Pin;
-use std::sync::Arc;
+use std::sync::{Arc, RwLock};
 
 use chrono::{DateTime, FixedOffset};
+use uuid::Uuid;
 
 pub type AsyncJob =
     Box<dyn Fn(DateTime<FixedOffset>) -> Pin<Box<dyn Future<Output = ()> + Send + 'static>> + Send + Sync>;
 pub type SyncJob = Box<dyn Fn(DateTime<FixedOffset>) + Send + Sync>;
 
 pub struct Job {
-    pub job: AsyncJob,
+    pub id: Uuid,
+    pub job: Arc<AsyncJob>,
+    interrupted: RwLock<bool>,
 }
 
 impl Job {
     pub fn new_async(job: AsyncJob) -> Self {
         Self {
-            job,
+            id: Uuid::new_v4(),
+            job: Arc::new(job),
+            interrupted: RwLock::new(false),
         }
     }
 
@@ -29,5 +34,18 @@ impl Job {
         });
 
         Self::new_async(job)
+    }
+
+    pub fn interrupt(&self) {
+        let mut interrupted = self.interrupted.write().expect("Failed to lock interrupted");
+        *interrupted = true;
+    }
+
+    pub fn is_interrupted(&self) -> bool {
+        *self.interrupted.read().expect("Failed to lock interrupted")
+    }
+
+    pub fn get_job(&self) -> Arc<AsyncJob> {
+        self.job.clone()
     }
 }

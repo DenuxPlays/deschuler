@@ -9,6 +9,7 @@ use deschuler::scheduler::job::Job;
 use deschuler::scheduler::tokio_scheduler::TokioScheduler;
 use deschuler::scheduler::Scheduler;
 
+mod interrupted;
 mod time;
 
 #[tokio::test]
@@ -33,7 +34,7 @@ async fn schedule_task_every_second_async() {
     }));
 
     let mut scheduler = TokioScheduler::default();
-    scheduler.schedule_job(cron, job);
+    scheduler.schedule_job(cron, Arc::new(job));
     scheduler.start();
 
     sleep(Duration::from_millis(3010)).await;
@@ -69,7 +70,7 @@ async fn schedule_task_every_second_sync() {
     }));
 
     let mut scheduler = TokioScheduler::default();
-    scheduler.schedule_job(cron, job);
+    scheduler.schedule_job(cron, Arc::new(job));
     scheduler.start();
 
     sleep(Duration::from_millis(3010)).await;
