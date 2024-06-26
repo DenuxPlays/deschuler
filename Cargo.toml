@@ -49,4 +49,4 @@ tracing = "0.1.40"
 
 # Utilities
 derive_builder = "0.20.0"
-uuid = { version = "1.8.0", features = ["v4"] }
+uuid = { version = "1.9.1", features = ["v4"] }
