@@ -38,7 +38,7 @@ time =  { version = "0.3.36", features = ["local-offset"] }
 [dependencies]
 # Scheduling and event handling
 tokio = { version = "1.39.1", features = ["time", "rt", "sync"] }
-croner = "2.0.4"
+croner = "2.0.5"
 
 # Time handling
 chrono = "0.4.38"
