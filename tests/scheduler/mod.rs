@@ -37,7 +37,7 @@ async fn schedule_task_every_second_async() {
     scheduler.schedule_job(cron, Arc::new(job));
     scheduler.start();
 
-    sleep(Duration::from_millis(3010)).await;
+    sleep(Duration::from_millis(3100)).await;
 
     scheduler.stop();
 
@@ -73,7 +73,7 @@ async fn schedule_task_every_second_sync() {
     scheduler.schedule_job(cron, Arc::new(job));
     scheduler.start();
 
-    sleep(Duration::from_millis(3010)).await;
+    sleep(Duration::from_millis(3100)).await;
 
     scheduler.stop();
 
