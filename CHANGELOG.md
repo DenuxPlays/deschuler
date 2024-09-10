@@ -14,7 +14,11 @@ What we've changed:
 
 We do this to make it easier to read when using `cargo-dist` to generate the release notes from the changelog.
 
-## unreleased
+## Version 0.4.1 (10.09.2024)
+
+### Changed
+
+- replaced `RwLock<bool>` with `AtomicBool` in `Job` 
 
 ## Version 0.4.0 (12.05.2024)
 
