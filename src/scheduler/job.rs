@@ -1,18 +1,18 @@
+use chrono::{DateTime, FixedOffset};
 use std::future::Future;
 use std::pin::Pin;
-use std::sync::{Arc, RwLock};
-
-use chrono::{DateTime, FixedOffset};
+use std::sync::atomic::{AtomicBool, Ordering};
+use std::sync::Arc;
 use uuid::Uuid;
 
 pub type AsyncJob =
-    Box<dyn Fn(DateTime<FixedOffset>) -> Pin<Box<dyn Future<Output = ()> + Send + 'static>> + Send + Sync>;
+Box<dyn Fn(DateTime<FixedOffset>) -> Pin<Box<dyn Future<Output=()> + Send + 'static>> + Send + Sync>;
 pub type SyncJob = Box<dyn Fn(DateTime<FixedOffset>) + Send + Sync>;
 
 pub struct Job {
     pub id: Uuid,
     pub job: Arc<AsyncJob>,
-    interrupted: RwLock<bool>,
+    interrupted: AtomicBool,
 }
 
 impl Job {
@@ -20,7 +20,7 @@ impl Job {
         Self {
             id: Uuid::new_v4(),
             job: Arc::new(job),
-            interrupted: RwLock::new(false),
+            interrupted: AtomicBool::new(false),
         }
     }
 
@@ -30,19 +30,18 @@ impl Job {
             let job = Arc::clone(&job);
             Box::pin(async move {
                 job(now);
-            }) as Pin<Box<dyn Future<Output = ()> + Send>>
+            }) as Pin<Box<dyn Future<Output=()> + Send>>
         });
 
         Self::new_async(job)
     }
 
     pub fn interrupt(&self) {
-        let mut interrupted = self.interrupted.write().expect("Failed to lock interrupted");
-        *interrupted = true;
+        self.interrupted.store(true, Ordering::Relaxed);
     }
 
     pub fn is_interrupted(&self) -> bool {
-        *self.interrupted.read().expect("Failed to lock interrupted")
+        self.interrupted.load(Ordering::Relaxed)
     }
 
     pub fn get_job(&self) -> Arc<AsyncJob> {
