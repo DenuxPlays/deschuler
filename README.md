@@ -1,8 +1,10 @@
 # deschuler
 
 > [!IMPORTANT]
-> This crate was developed to use in the [financrr](https://github.com/financrr/financrr-app) projekt.
-> It will be extended as needed.
+> NOT MAINTAINED ANYMORE!!!
+
+I've built this library to be a scheduler that uses croner as it's backend.  
+But now the [tokio-cron-scheduler](https://github.com/mvniekerk/tokio-cron-scheduler) crate also uses croner so there is no need to built a new library.  
 
 An async, tokio based scheduling library for rust with a built-in cron builder.
 It uses [croner](https://github.com/Hexagon/croner-rust) for the most available cron features.
